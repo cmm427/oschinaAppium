@@ -22,6 +22,8 @@ public class NewsPage extends BasePage{
     By search = By.id("net.oschina.app:id/tv_cancel");
     By iv_banner = By.id("net.oschina.app:id/iv_banner");
 
+    By recycler = By.id("net.oschina.app:id/view_recycler_active");
+
     public NewsPage(WebDriver driver){
         super(driver);
     }
@@ -49,6 +51,20 @@ public class NewsPage extends BasePage{
 
     public NewsPage testDefaultNav() {
         waitForVisibilityOf(nav);
+        /*waitForVisibilityOf(iv_arrow_down);
+        (driver.findElement(iv_arrow_down)).click();
+        waitForVisibilityOf(tv_done);
+        (driver.findElement(tv_done)).click();
+        WebElement rc = driver.findElement(recycler);
+        List<WebElement> els = rc.findElements(By.className("android.widget.FrameLayout"));
+        for(WebElement el : els) {
+            WebElement tmp = el.findElement(By.className("android.widget.TextView"));
+            String str = tmp.getText();
+            System.out.println(str);
+        }
+        (driver.findElement(iv_arrow_down)).click();*/
+
+
         List<WebElement> elements = driver.findElements(nav);
         final String[] strs = {"开源资讯","推荐博客","技术问答","每日一博"};
         int idx = 0;
@@ -56,7 +72,10 @@ public class NewsPage extends BasePage{
             WebElement tmp = el.findElement(By.className("android.widget.TextView"));
             String str = tmp.getText();
             System.out.println(str);
-            Assert.assertEquals(strs[idx++], str);
+            if(idx < 4){
+                Assert.assertEquals(strs[idx], str);
+            }
+            idx++;
         }
 
         return new NewsPage(driver);
@@ -75,7 +94,7 @@ public class NewsPage extends BasePage{
         waitForVisibilityOf(tv_done);
         List<WebElement> elements = driver.findElements(items);
         for(WebElement el : elements) {
-            System.out.println(el.findElement(By.className("android.widget.TextView")).getText());
+            //System.out.println(el.findElement(By.className("android.widget.TextView")).getText());
         }
         WebElement narrow_down = driver.findElement(iv_arrow_down);
         narrow_down.click();
@@ -87,8 +106,12 @@ public class NewsPage extends BasePage{
         List<WebElement> elements = driver.findElements(nav);
         WebElement start = (elements.get(1)).findElement(By.className("android.widget.TextView"));
         WebElement end = (elements.get(3)).findElement(By.className("android.widget.TextView"));
-        ((AndroidDriver) driver).swipe(start.getLocation().getX(), start.getLocation().getY(), end.getLocation().getX(), end.getLocation().getY(), 1000);
-        ((AndroidDriver) driver).swipe(end.getLocation().getX(), end.getLocation().getY(), start.getLocation().getX(), start.getLocation().getY(), 1000);
+        int startX = start.getLocation().getX();
+        int startY = start.getLocation().getY();
+        int endX = end.getLocation().getX();
+        int endY = end.getLocation().getY();
+        ((AndroidDriver) driver).swipe(endX, endY, startX, startY, 1000);
+        ((AndroidDriver) driver).swipe(startX, startY, endX, endY, 1000);
 
         return new NewsPage(driver);
     }
